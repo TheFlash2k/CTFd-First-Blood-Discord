@@ -7,7 +7,6 @@ import aiohttp
 
 import config
 
-
 class Announcer:
     webhook_data: Dict[str, Any]
     solve_string: str
@@ -29,7 +28,8 @@ class Announcer:
         team_name: str,
         emoji: str,
         first_blood: bool = False,
-        chal_id: int = 0
+        chal_id: int = 0,
+        category: str = ""
     ):
 
         async with aiohttp.ClientSession() as session:

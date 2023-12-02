@@ -111,8 +111,11 @@ class SolveHandler:
                           (chal.chal_id, user.user_id))
         DB.conn.commit()
 
+        r = s.get(f"/challenges/{chal.chal_id}")
+        chal.category = r.json()["data"]["category"]
+
         if chal.category:
-            emojis = config.CATEGORY_EMOJIS.get(chal.category, [])
+            emojis = config.CATEGORY_EMOJIS.get(chal.category.lower(), [])
         else:
             emojis = []
 
@@ -122,10 +125,13 @@ class SolveHandler:
             emoji_string = ""
 
         await self.announcer.announce(chal.name,
-                                      user.user_name,
-                                      user.team_name,
-                                      emoji_string,
-                                      first_blood=True)
+            user.user_name,
+            user.team_name,
+            emoji_string,
+            first_blood=True,
+            chal_id=chal.chal_id,
+            category=chal.category
+        )
 
     async def handle_new_solves(self, chal: Challenge):
         users = chal.get_solved_users()
@@ -147,8 +153,11 @@ class SolveHandler:
                                   (chal.chal_id, user.user_id))
                 DB.conn.commit()
 
+                r = s.get(f"/challenges/{chal.chal_id}")
+                chal.category = r.json()["data"]["category"]
+
                 if chal.category:
-                    emojis = config.CATEGORY_EMOJIS.get(chal.category, [])
+                    emojis = config.CATEGORY_EMOJIS.get(chal.category.lower(), [])
                 else:
                     emojis = []
 
@@ -163,7 +172,8 @@ class SolveHandler:
                     user.team_name,
                     emoji_string,
                     first_blood=False,
-                    chal_id=chal.chal_id)
+                    chal_id=chal.chal_id,
+                    category=chal.category)
             else:
                 logging.debug("Already announced solve on %s by %s - %s",
                               chal.name, user.user_name, user.user_id)
