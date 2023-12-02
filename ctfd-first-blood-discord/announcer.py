@@ -29,8 +29,18 @@ class Announcer:
         emoji: str,
         first_blood: bool = False,
         chal_id: int = 0,
-        category: str = ""
+        category: str = "",
+        points: int = 0
     ):
+
+        json_data = {
+            "points" : points,
+            "category" : category,
+            "chal_name" : chal_name,
+            "team_name" : team_name,
+            "solved_by" : user_name,
+            "first_blood" : first_blood
+        }
 
         async with aiohttp.ClientSession() as session:
 

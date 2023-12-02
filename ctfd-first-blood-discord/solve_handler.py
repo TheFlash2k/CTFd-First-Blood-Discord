@@ -112,7 +112,9 @@ class SolveHandler:
         DB.conn.commit()
 
         r = s.get(f"/challenges/{chal.chal_id}")
-        chal.category = r.json()["data"]["category"]
+        __ = r.json()["data"]
+        chal.category = __["category"]
+        challenge_points = __["value"]
 
         if chal.category:
             emojis = config.CATEGORY_EMOJIS.get(chal.category.lower(), [])
@@ -130,7 +132,8 @@ class SolveHandler:
             emoji_string,
             first_blood=True,
             chal_id=chal.chal_id,
-            category=chal.category
+            category=chal.category,
+            points=challenge_points
         )
 
     async def handle_new_solves(self, chal: Challenge):
@@ -153,8 +156,9 @@ class SolveHandler:
                                   (chal.chal_id, user.user_id))
                 DB.conn.commit()
 
-                r = s.get(f"/challenges/{chal.chal_id}")
-                chal.category = r.json()["data"]["category"]
+                __ = r.json()["data"]
+                chal.category = __["category"]
+                challenge_points = __["value"]
 
                 if chal.category:
                     emojis = config.CATEGORY_EMOJIS.get(chal.category.lower(), [])
@@ -173,7 +177,8 @@ class SolveHandler:
                     emoji_string,
                     first_blood=False,
                     chal_id=chal.chal_id,
-                    category=chal.category)
+                    category=chal.category,
+                    points=challenge_points)
             else:
                 logging.debug("Already announced solve on %s by %s - %s",
                               chal.name, user.user_name, user.user_id)
