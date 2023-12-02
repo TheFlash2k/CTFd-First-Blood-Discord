@@ -37,9 +37,20 @@ class Challenge():
             logging.error(error)
             return None
 
-        solved_users = [
-            User(solve["account_id"], solve["name"]) for solve in data
-        ]
+        for i in range(len(data)):
+            res = s.get(f"teams/{data[i]['account_id']}/solves")
+            buf = res.json()["data"]
+            chal = None
+            for item in buf:
+                if item["challenge_id"] == self.chal_id:
+                    chal = item
+                    break
+            if not chal:
+                return None
+
+            data[i]["user_name"] = chal["user"]["name"]
+
+        solved_users = [User(solve["account_id"], user_name=solve["user_name"], team_name=solve["name"]) for solve in data]
 
         return solved_users
 
@@ -69,16 +80,33 @@ class Challenge():
             logging.error(error)
             return None
 
+        # Getting the solves by solve["account_id"]
+        for i in range(len(data)):
+            res = s.get(f"teams/{data[i]['account_id']}/solves")
+            buf = res.json()["data"]
+            chal = None
+            # Getting only the solve for self.chal_id
+            for item in buf:
+                if item["challenge_id"] == self.chal_id:
+                    chal = item
+                    break
+            if not chal:
+                return None
+
+            data[i]["user_name"] = chal["user"]["name"]
+
         solves = [{
             "user_id": solve["account_id"],
-            "user_name": solve["name"],
+            "user_name": solve["user_name"],
+            "team_name": solve["name"],
             "solve_time": isoparser().isoparse(solve["date"])
         } for solve in data]
 
         solves.sort(key=lambda x: x["solve_time"].timestamp())
 
         user_name = cast(str, solves[0]["user_name"])
+        team_name = cast(str, solves[0]["team_name"])
         user_id = cast(int, solves[0]["user_id"])
-        logging.info("First Blood: %s - %s", user_name, user_id)
+        logging.info("First Blood: %s of %s - %s", user_name, team_name, user_id)
 
-        return User(user_id, user_name)
+        return User(user_id, user_name, team_name)

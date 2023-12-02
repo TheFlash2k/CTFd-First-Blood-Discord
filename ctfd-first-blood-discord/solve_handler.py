@@ -37,6 +37,7 @@ class SolveHandler:
             chals = []
 
         for chal_data in chals:
+            print(f"Got challenge data: {chal_data}")
             chal = Challenge(chal_data["id"], chal_data["name"],
                              chal_data["solves"])
 
@@ -64,7 +65,7 @@ class SolveHandler:
             chals = []
 
         for chal_data in chals:
-
+            print(f"Got challenge data: {chal_data}")
             chal = Challenge(chal_data["id"], chal_data["name"],
                              chal_data["solves"])
 
@@ -121,7 +122,8 @@ class SolveHandler:
             emoji_string = ""
 
         await self.announcer.announce(chal.name,
-                                      user.name,
+                                      user.user_name,
+                                      user.team_name,
                                       emoji_string,
                                       first_blood=True)
 
@@ -138,8 +140,8 @@ class SolveHandler:
 
         for user in users:
             if (user.user_id, ) not in res:
-                logging.info("New Solve - Challenge: %s - User: %s", chal.name,
-                             user.name)
+                logging.info("New Solve - Challenge: %s - User: %s - Team: %s", chal.name,
+                             user.user_name, user.team_name)
 
                 DB.cursor.execute("INSERT INTO announced_solves VALUES (?, ?)",
                                   (chal.chal_id, user.user_id))
@@ -155,10 +157,13 @@ class SolveHandler:
                 else:
                     emoji_string = ""
 
-                await self.announcer.announce(chal.name,
-                                              user.name,
-                                              emoji_string,
-                                              first_blood=False)
+                await self.announcer.announce(
+                    chal.name,
+                    user.user_name,
+                    user.team_name,
+                    emoji_string,
+                    first_blood=False,
+                    chal_id=chal.chal_id)
             else:
                 logging.debug("Already announced solve on %s by %s - %s",
-                              chal.name, user.name, user.user_id)
+                              chal.name, user.user_name, user.user_id)
