@@ -5,7 +5,6 @@ services:
     build:
       context: .
     restart: unless-stopped
-    # privileged: true
     volumes:
       - ./ctfd-first-blood-discord/data:/app/data
 
