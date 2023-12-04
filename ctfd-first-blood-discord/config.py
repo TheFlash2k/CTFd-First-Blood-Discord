@@ -11,6 +11,9 @@ POLL_PERIOD = 5
 FIRST_BLOOD_WEBHOOK_URL = ""
 SOLVE_WEBHOOK_URL = ""
 
+# Announcer Endpoint:
+ANNOUNCER_URL = ""
+
 # Available template variables are:
 # User Name (if individual mode) / Team Name (if team mode): {team_name} {user_name}
 # Challenge Name: {chal_name}

@@ -133,7 +133,8 @@ class SolveHandler:
             first_blood=True,
             chal_id=chal.chal_id,
             category=chal.category,
-            points=challenge_points
+            points=challenge_points,
+            s=s
         )
 
     async def handle_new_solves(self, chal: Challenge):
@@ -155,7 +156,8 @@ class SolveHandler:
                 DB.cursor.execute("INSERT INTO announced_solves VALUES (?, ?)",
                                   (chal.chal_id, user.user_id))
                 DB.conn.commit()
-
+                
+                r = s.get(f"/challenges/{chal.chal_id}")
                 __ = r.json()["data"]
                 chal.category = __["category"]
                 challenge_points = __["value"]
@@ -178,7 +180,9 @@ class SolveHandler:
                     first_blood=False,
                     chal_id=chal.chal_id,
                     category=chal.category,
-                    points=challenge_points)
+                    points=challenge_points,
+                    s=s
+                )
             else:
                 logging.debug("Already announced solve on %s by %s - %s",
                               chal.name, user.user_name, user.user_id)

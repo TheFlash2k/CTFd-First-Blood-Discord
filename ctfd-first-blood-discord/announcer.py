@@ -30,7 +30,8 @@ class Announcer:
         first_blood: bool = False,
         chal_id: int = 0,
         category: str = "",
-        points: int = 0
+        points: int = 0,
+        s = None # Bad Coding :(
     ):
 
         json_data = {
@@ -41,6 +42,18 @@ class Announcer:
             "solved_by" : user_name,
             "first_blood" : first_blood
         }
+
+        ep = 'blood' if first_blood else 'solves'
+        r = requests.post(f"{config.ANNOUNCER_URL}/api/{ep}", json=json_data)
+
+        # Sending the new leaderboard:
+        print("Fetching the current leaderboard")
+        r = s.get("scoreboard")
+        top_10 = r.json()["data"][:10]
+        teams = [{"name": team["name"], "points": team["score"], "position": team["pos"]} for team in top_10]
+        print(f"Got teams: {top_10}")
+        r = requests.post(f"{config.ANNOUNCER_URL}/api/leaderboard", json=teams)
+        print(f"Response from /leaderboard: {r.json()}")
 
         async with aiohttp.ClientSession() as session:
 
