@@ -1,8 +1,5 @@
 # CTFd First Blood Discord
 
-# ⚠️ Deprecation Notice ⚠️
-I will no longer be maintaining this bot and I suggest you migrate to my Rust rewrite https://github.com/jordanbertasso/ctfd-solve-announcer-discord
-
 ---
 
 This is a dockerised bot that uses Discords channel webhook feature to announce CTFd first bloods.
@@ -20,3 +17,11 @@ This is a dockerised bot that uses Discords channel webhook feature to announce 
     ```
 
 You can customise the announcement template in `config.py` as well.
+
+---
+
+# Features that I'll add soon:
+
+- Award points to user for first, second and third blood
+    - These points will be user controlled in an attribute defined in `config.py`
+  
